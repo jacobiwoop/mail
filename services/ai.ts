@@ -1,6 +1,14 @@
 import Groq from "groq-sdk";
 
-const groq = new Groq({ apiKey: process.env.API_KEY, dangerouslyAllowBrowser: true });
+// Lazy load Groq client to prevent crash if API key is missing during build/initialization
+const getGroqClient = () => {
+  const apiKey = process.env.API_KEY || process.env.GROQ_API_KEY;
+  if (!apiKey) {
+    console.warn("GROQ_API_KEY is not set. AI features will not work.");
+    return null;
+  }
+  return new Groq({ apiKey, dangerouslyAllowBrowser: true });
+};
 
 export interface GeneratedEmail {
   subject: string;
@@ -29,6 +37,11 @@ export const generateEmailDraft = async (
   You must also generate a concise and professional Subject line based on the content.
   The output must be a valid JSON object with the keys "subject" and "body".
   JSON format only.`;
+
+  const groq = getGroqClient();
+  if (!groq) {
+      throw new Error("La clé API Groq n'est pas configurée. Veuillez ajouter GROQ_API_KEY dans vos variables d'environnement.");
+  }
 
   const completion = await groq.chat.completions.create({
     messages: [
