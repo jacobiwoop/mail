@@ -1,0 +1,5 @@
+{
+  "name": "INTERAC Internal Mail",
+  "description": "A high-fidelity internal messaging simulation for INTERAC, featuring a Gmail/Outlook-like interface, threading, and administration tools.",
+  "requestFramePermissions": []
+}
